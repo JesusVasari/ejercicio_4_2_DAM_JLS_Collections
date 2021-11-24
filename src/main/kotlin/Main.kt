@@ -1,19 +1,41 @@
 data class Tienda(val nombre: String, val clientes: List<Clientes>) {
 
-fun obtenerConjuntoClientes(){
+    fun obtenerConjuntoClientes() {
 
-}
-    fun obtenerCiudades() : Map<String, Int> {
-        var ciudad = setOf<Ciudad>()
-        var city = mapOf("ciudad1" to 1, "ciudad2" to 2)
-        return (city)
+        return clientes.toSet()
+
     }
-    //fun obtenerClientesPor(ciudad:Ciudad): List<Clientes>  {
-     //   var cité = listOf<Clientes>().filter { it = Cádiz}
-    // }
+
+    fun obtenerCiudadesDeClientes(): Set<Ciudad> {
+        return clientes.map { it.ciudad }
+    }
+
+
+    fun obtenerClientesPor(ciudad: Ciudad): List<Clientes> {
+        return clientes.filter { it.ciudad == ciudad }
+    }
+
+    fun obtenerClientesConPedidosSinEntregar(): Set<Clientes> {
+        return emptySet<Clientes>().partition { it.pedidos == -> Boolean }
+    }
+
+    fun obtenerClientesOrdenadosPorPedidos(): List<Clientes> {
+        return listOf<Clientes>().sortedByDescending { it.pedidos == }
+    }
+    fun encuentraClienteDe(ciudad: Ciudad): Clientes? {
+          return clientes.find { it.ciudad == ciudad }
+    }
+
+    fun hayClientesDe(ciudad: Ciudad): Boolean {
+        return
+    }
+    /*
+    fun checkTodosClientesSonDe(ciudad : Ciudad): Boolean {
+
+    }*/
+
 
 }
-
 
 
 data class Clientes(val nombre: String, val ciudad: Ciudad, val pedidos: List<Pedido>) {
@@ -55,10 +77,11 @@ fun main(args: Array<String>) {
     var cliente3: Clientes = Clientes("La Uchi", ciudad1, listOf(pedido3))
 
     var tienda1: Tienda = Tienda("ALDI", listOf(cliente1, cliente2))
-    var tienda2:Tienda = Tienda("LIDL",  listOf(cliente3,cliente1))
+    var tienda2: Tienda = Tienda("LIDL", listOf(cliente3, cliente1))
 
 
-    tienda1.obtenerCiudades()
+
+    tienda1.obtenerClientesPor(Ciudad("Cádiz"))
 
     println(p1)
     println(pedido1)
