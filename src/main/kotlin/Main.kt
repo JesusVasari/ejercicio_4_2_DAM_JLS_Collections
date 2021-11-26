@@ -1,45 +1,86 @@
 data class Tienda(val nombre: String, val clientes: List<Clientes>) {
 
-    fun obtenerConjuntoClientes() {
+    //4.1
+    fun obtenerConjuntoClientes(): Set<Clientes> = clientes.toSet()
 
-        return clientes.toSet()
+    // 4.3.2
+//
+    fun obtenerCiudadesDeClientes(): Set<Ciudad> = clientes.map { it.ciudad }.toSet()
 
-    }
-
-    fun obtenerCiudadesDeClientes(): Set<Ciudad> {
-        return clientes.map { it.ciudad }
-    }
-
-
+    //4-3-1
     fun obtenerClientesPor(ciudad: Ciudad): List<Clientes> {
         return clientes.filter { it.ciudad == ciudad }
     }
 
-    fun obtenerClientesConPedidosSinEntregar(): Set<Clientes> {
-        return emptySet<Clientes>().partition { it.pedidos == -> Boolean }
+    // 4.3.3.1
+    fun checkTodosClientesSonDe(ciudad: Ciudad): Boolean {
+        return clientes.all { it.ciudad == ciudad }
     }
 
-    fun obtenerClientesOrdenadosPorPedidos(): List<Clientes> {
-        return listOf<Clientes>().sortedByDescending { it.pedidos == }
-    }
-    fun encuentraClienteDe(ciudad: Ciudad): Clientes? {
-          return clientes.find { it.ciudad == ciudad }
-    }
-
+    // 4.3.3.2
     fun hayClientesDe(ciudad: Ciudad): Boolean {
-        return
+        return clientes.any() { it.ciudad == ciudad }
     }
-    /*
-    fun checkTodosClientesSonDe(ciudad : Ciudad): Boolean {
 
-    }*/
+    //4.3.3.3
+    fun encuentraClienteDe(ciudad: Ciudad): Clientes? {
+        return clientes.find { it.ciudad == ciudad }
+    }
 
+    //v4..3.4
+    fun obtenerClientesOrdenadosPorPedidos(): List<Clientes> {
+        return listOf<Clientes>().sortedByDescending { it.pedidos.count() }
+    }
+
+    //4.3.5
+    fun obtenerClientesConPedidosSinEntregar(): Set<Clientes> {
+        return emptySet<Clientes>().partition { it.pedidos.count { it.estaEntregado } > it.pedidos.count { !it.estaEntregado } }.second.toSet()
+    }
+
+    fun Tienda.obtenerProductosPedidos(): Set<Producto> {
+        return clientes.flatMap { it.pedidos }.flatMap { it.productos }.toSet()
+    }
+
+    //4.3.9
+    fun Tienda.agrupaClientesPorCiudad(): Map<Ciudad, List<Clientes>> {
+        return clientes.groupBy { it.ciudad }
+    }
+
+    //4.10.1
+    fun Tienda.mapeaNombreACliente(): Map<String, Clientes> {
+        return clientes.associateBy { it.nombre }
+    }
+
+    //4.10.2
+    fun Tienda.mapeaClienteACiudad(): Map<Clientes, Ciudad> {
+        return clientes.associateWith { it.ciudad }
+    }
+
+    //4.11
+    fun Tienda.obtenerClientesConMaxPedidos(): Clientes? {
+        return clientes.maxByOrNull { it.pedidos.count() }
+    }
 
 }
 
 
 data class Clientes(val nombre: String, val ciudad: Ciudad, val pedidos: List<Pedido>) {
     override fun toString() = "$nombre oriundo de ${ciudad.nombre}"
+    //4.6
+    fun Clientes.obtenerProductosPedidos(): List<Producto> {
+        return pedidos.flatMap { it.productos }
+    }
+
+    //4.8
+    fun Clientes.obtenerProductoMasCaroPedido(): Producto? {
+        return pedidos.filter { it.estaEntregado }.flatMap { it.productos }.maxByOrNull { it.precio }
+    }
+
+    // 4.12
+    fun Clientes.dineroGastado(): Double {
+        return pedidos.filter { it.estaEntregado }.flatMap { it.productos }.sumOf { it.precio }
+    }
+
 }
 
 
@@ -81,12 +122,8 @@ fun main(args: Array<String>) {
 
 
 
-    tienda1.obtenerClientesPor(Ciudad("Cádiz"))
+    tienda1.obtenerClientesPor("Cádiz"))
+    println(" los clientes son: ")
 
-    println(p1)
-    println(pedido1)
-    println(cliente1)
-    println(tienda1)
-    println(tienda2)
 
 }
