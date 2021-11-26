@@ -36,30 +36,40 @@ data class Tienda(val nombre: String, val clientes: List<Clientes>) {
     fun obtenerClientesConPedidosSinEntregar(): Set<Clientes> {
         return emptySet<Clientes>().partition { it.pedidos.count { it.estaEntregado } > it.pedidos.count { !it.estaEntregado } }.second.toSet()
     }
-
-    fun Tienda.obtenerProductosPedidos(): Set<Producto> {
+ //4.6.2
+    fun obtenerProductosPedidos(): Set<Producto> {
+        return clientes.flatMap { it.pedidos }.flatMap { it.productos }.toSet()
+    }
+    //4.7
+    fun Tienda.obtenerProductosPedidosPorTodos(): Set<Producto> {
         return clientes.flatMap { it.pedidos }.flatMap { it.productos }.toSet()
     }
 
+
     //4.3.9
-    fun Tienda.agrupaClientesPorCiudad(): Map<Ciudad, List<Clientes>> {
+    fun agrupaClientesPorCiudad(): Map<Ciudad, List<Clientes>> {
         return clientes.groupBy { it.ciudad }
     }
 
     //4.10.1
-    fun Tienda.mapeaNombreACliente(): Map<String, Clientes> {
+    fun mapeaNombreACliente(): Map<String, Clientes> {
         return clientes.associateBy { it.nombre }
     }
 
     //4.10.2
-    fun Tienda.mapeaClienteACiudad(): Map<Clientes, Ciudad> {
+    fun mapeaClienteACiudad(): Map<Clientes, Ciudad> {
         return clientes.associateWith { it.ciudad }
     }
 
     //4.11
-    fun Tienda.obtenerClientesConMaxPedidos(): Clientes? {
+    fun obtenerClientesConMaxPedidos(): Clientes? {
         return clientes.maxByOrNull { it.pedidos.count() }
     }
+    //4.12
+    fun dineroGastado(): Double {
+        return clientes.flatMap { it.pedidos }.flatMap { it.productos }.sumOf { it.precio }.toDouble()
+    }
+
 
 }
 
@@ -67,17 +77,17 @@ data class Tienda(val nombre: String, val clientes: List<Clientes>) {
 data class Clientes(val nombre: String, val ciudad: Ciudad, val pedidos: List<Pedido>) {
     override fun toString() = "$nombre oriundo de ${ciudad.nombre}"
     //4.6
-    fun Clientes.obtenerProductosPedidos(): List<Producto> {
+    fun obtenerProductosPedidos(): List<Producto> {
         return pedidos.flatMap { it.productos }
     }
 
     //4.8
-    fun Clientes.obtenerProductoMasCaroPedido(): Producto? {
+    fun obtenerProductoMasCaroPedido(): Producto? {
         return pedidos.filter { it.estaEntregado }.flatMap { it.productos }.maxByOrNull { it.precio }
     }
 
     // 4.12
-    fun Clientes.dineroGastado(): Double {
+    fun dineroGastado(): Double {
         return pedidos.filter { it.estaEntregado }.flatMap { it.productos }.sumOf { it.precio }
     }
 
